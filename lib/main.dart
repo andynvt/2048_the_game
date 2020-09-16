@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:the_game_2048/theme.dart';
-import 'game.dart';
+import 'package:the_game_2048/widget/theme.dart';
+import 'game/game.dart';
+import 'service/service.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await CacheService.init();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -17,9 +22,8 @@ class MyApp extends StatelessWidget {
             title: appTitle,
             theme: theme.getTheme(),
             home: new Scaffold(
-              body: GameWidget(
-                row: 4,
-                column: 4,
+              body: SafeArea(
+                child: GameWidget(size: 4),
               ),
             ),
           );

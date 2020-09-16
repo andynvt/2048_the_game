@@ -1,18 +1,20 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:the_game_2048/service/cache/cache_service.dart';
 
-import 'config.dart';
+import '../config.dart';
+import '../widget/consum.dart';
+import '../widget/theme.dart';
 import 'logic.dart';
-import 'theme.dart';
 
 class GameWidget extends StatefulWidget {
-  final int row;
-  final int column;
+  final int size;
 
-  const GameWidget({Key key, this.row, this.column}) : super(key: key);
+  const GameWidget({Key key, this.size}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _GameWidgetState(row, column);
+    return _GameWidgetState(size, size);
   }
 }
 
@@ -25,12 +27,14 @@ class _GameWidgetState extends State<GameWidget> {
   final EdgeInsets _gameMargin = EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0);
   bool _isDragging = false;
   bool _isGameOver = false;
+  int bestScore = 0;
 
   _GameWidgetState(this.row, this.column);
 
   @override
   void initState() {
     super.initState();
+
     newGame(4);
   }
 
@@ -39,9 +43,9 @@ class _GameWidgetState extends State<GameWidget> {
     _game.init();
     setState(() {
       row = column = size;
-    _isGameOver = false;
-
+      _isGameOver = false;
     });
+    bestScore = CacheService.shared().getInt('score_$row');
   }
 
   void moveLeft() {
@@ -75,6 +79,12 @@ class _GameWidgetState extends State<GameWidget> {
   void checkGameOver() {
     if (_game.isGameOver()) {
       _isGameOver = true;
+      if (_game.score > bestScore) {
+        setState(() {
+          bestScore = _game.score;
+        });
+      }
+      CacheService.shared().setInt('score_$row', bestScore);
     }
   }
 
@@ -128,7 +138,7 @@ class _GameWidgetState extends State<GameWidget> {
   }
 
   void menuClick() {
-   final w = MediaQuery.of(context).size.width;
+    final w = MediaQuery.of(context).size.width;
     final width = (w - 64) / 3;
     showModalBottomSheet(
       context: context,
@@ -174,7 +184,17 @@ class _GameWidgetState extends State<GameWidget> {
                         ],
                       ),
                       OutlineButton(
-                        child: Text('Light theme'),
+                        child: Consum<TTheme>(
+                            value: TTheme.shared,
+                            builder: (_, theme) {
+                              String text = 'System';
+                              if (theme.mode == 1) {
+                                text = 'Light mode';
+                              } else if (theme.mode == 2) {
+                                text = 'Dark mode';
+                              }
+                              return Text(text);
+                            }),
                         highlightedBorderColor: Colors.grey,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(100),
@@ -193,7 +213,7 @@ class _GameWidgetState extends State<GameWidget> {
                           InkWell(
                             onTap: () {
                               Navigator.of(_).pop();
-                              newGame(3);
+                              newGame(2);
                             },
                             child: Container(
                               color: Colors.red,
@@ -266,71 +286,185 @@ class _GameWidgetState extends State<GameWidget> {
     List<Widget> children = List<Widget>();
     children.add(BoardGridWidget(this));
     children.addAll(_cellWidgets);
+    EdgeInsets padding = const EdgeInsets.fromLTRB(20, 20, 20, 0);
     return Column(
       children: <Widget>[
-        Container(
-          margin: EdgeInsets.fromLTRB(0.0, 64.0, 0.0, 0.0),
+        Padding(
+          padding: padding,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.menu),
-                onPressed: menuClick,
-              ),
-              Container(
-                color: Colors.orange[100],
-                child: Container(
-                  width: 130.0,
-                  height: 60.0,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "SCORE",
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                        Text(
-                          _game.score.toString(),
-                          // '0000000',
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey[800],
-                          ),
-                        ),
-                      ],
-                    ),
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  '2048',
+                  style: TextStyle(
+                    fontSize: 50,
+                    color: Color(0xff776e65),
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    height: 27,
+                    child: AutoSizeText(
+                      'Join and get to the',
+                      maxLines: 2,
+                      style: TextStyle(
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '2048 tile!',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: padding,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
               Container(
-                color: Colors.orange[100],
-                child: Container(
-                  width: 130.0,
-                  height: 60.0,
+                width: 110,
+                height: 60.0,
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.orange[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "SCORE",
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      Text(
+                        _game.score.toString(),
+                        // '0000000',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(width: 10),
+              Container(
+                width: 110,
+                height: 60.0,
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.orange[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "BEST",
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      Text(
+                        bestScore.toString(),
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Spacer(),
+              IconButton(
+                icon: Icon(
+                  Icons.settings,
+                  size: 30,
+                ),
+                onPressed: menuClick,
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 40),
+        GestureDetector(
+          onVerticalDragUpdate: (detail) {
+            if (detail.delta.distance == 0 || _isDragging) {
+              return;
+            }
+            _isDragging = true;
+            if (detail.delta.direction > 0) {
+              moveDown();
+            } else {
+              moveUp();
+            }
+          },
+          onVerticalDragEnd: (detail) {
+            _isDragging = false;
+          },
+          onVerticalDragCancel: () {
+            _isDragging = false;
+          },
+          onHorizontalDragUpdate: (detail) {
+            if (detail.delta.distance == 0 || _isDragging) {
+              return;
+            }
+            _isDragging = true;
+            if (detail.delta.direction > 0) {
+              moveLeft();
+            } else {
+              moveRight();
+            }
+          },
+          onHorizontalDragDown: (detail) {
+            _isDragging = false;
+          },
+          onHorizontalDragCancel: () {
+            _isDragging = false;
+          },
+          child: Stack(
+            children: [
+              Container(
+                margin: _gameMargin,
+                width: _queryData.size.width,
+                height: _queryData.size.width,
+                child: Stack(
+                  children: children,
+                ),
+              ),
+              Container(
+                margin: _gameMargin,
+                width: _queryData.size.width,
+                height: _queryData.size.width,
+                color: _isGameOver ? Color.fromRGBO(255, 255, 255, 0.4) : Colors.transparent,
+                child: Opacity(
+                  opacity: _isGameOver ? 1.0 : 0.0,
                   child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "BEST",
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                        Text(
-                          // _game.score.toString(),
-                          '0000000',
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey[800],
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      "Game Over!",
+                      style: TextStyle(
+                        fontSize: 24.0,
+                      ),
                     ),
                   ),
                 ),
@@ -338,61 +472,6 @@ class _GameWidgetState extends State<GameWidget> {
             ],
           ),
         ),
-        Container(
-          height: 50.0,
-          child: Opacity(
-            opacity: _isGameOver ? 1.0 : 0.0,
-            child: Center(
-              child: Text("Game Over!",
-                  style: TextStyle(
-                    fontSize: 24.0,
-                  )),
-            ),
-          ),
-        ),
-        Container(
-            margin: _gameMargin,
-            width: _queryData.size.width,
-            height: _queryData.size.width,
-            child: GestureDetector(
-              onVerticalDragUpdate: (detail) {
-                if (detail.delta.distance == 0 || _isDragging) {
-                  return;
-                }
-                _isDragging = true;
-                if (detail.delta.direction > 0) {
-                  moveDown();
-                } else {
-                  moveUp();
-                }
-              },
-              onVerticalDragEnd: (detail) {
-                _isDragging = false;
-              },
-              onVerticalDragCancel: () {
-                _isDragging = false;
-              },
-              onHorizontalDragUpdate: (detail) {
-                if (detail.delta.distance == 0 || _isDragging) {
-                  return;
-                }
-                _isDragging = true;
-                if (detail.delta.direction > 0) {
-                  moveLeft();
-                } else {
-                  moveRight();
-                }
-              },
-              onHorizontalDragDown: (detail) {
-                _isDragging = false;
-              },
-              onHorizontalDragCancel: () {
-                _isDragging = false;
-              },
-              child: Stack(
-                children: children,
-              ),
-            )),
       ],
     );
   }

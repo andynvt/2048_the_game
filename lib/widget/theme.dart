@@ -5,7 +5,7 @@ class TTheme extends ChangeNotifier {
 
   final ThemeData light = ThemeData.light();
   final ThemeData dark = ThemeData.dark();
-  int mode = 0;
+  int mode = 1;
 
   void changeTheme() {
     mode += 1;
