@@ -3,8 +3,28 @@ import 'package:flutter/material.dart';
 class TTheme extends ChangeNotifier {
   static TTheme shared = TTheme();
 
-  final ThemeData light = ThemeData.light();
-  final ThemeData dark = ThemeData.dark();
+  final ThemeData light = ThemeData(
+    brightness: Brightness.light,
+    fontFamily: 'SFPro',
+    textTheme: TextTheme(
+      headline1: TextStyle(
+        fontSize: 50,
+        fontWeight: FontWeight.bold,
+        color: Colors.red,
+      ),
+    )
+  );
+  final ThemeData dark = ThemeData(
+    brightness: Brightness.dark,
+    fontFamily: 'SFPro',
+    textTheme: TextTheme(
+      headline1: TextStyle(
+        fontSize: 50,
+        fontWeight: FontWeight.bold,
+        color: Colors.blue,
+      ),
+    )
+  );
   int mode = 1;
 
   void changeTheme() {
@@ -12,7 +32,6 @@ class TTheme extends ChangeNotifier {
     if (mode > 2) {
       mode = 0;
     }
-    // updateTheme();
     notifyListeners();
   }
 

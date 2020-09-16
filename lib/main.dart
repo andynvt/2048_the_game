@@ -13,13 +13,11 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appTitle = '2048';
     return ChangeNotifierProvider.value(
       value: TTheme.shared,
       child: Consumer<TTheme>(
         builder: (_, theme, __) {
           return MaterialApp(
-            title: appTitle,
             theme: theme.getTheme(),
             home: new Scaffold(
               body: SafeArea(

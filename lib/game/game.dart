@@ -23,7 +23,7 @@ class _GameWidgetState extends State<GameWidget> {
   MediaQueryData _queryData;
   int row;
   int column;
-  final double cellPadding = 5.0;
+  final double cellPadding = 8.0;
   final EdgeInsets _gameMargin = EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0);
   bool _isDragging = false;
   bool _isGameOver = false;
@@ -297,11 +297,7 @@ class _GameWidgetState extends State<GameWidget> {
               Expanded(
                 child: Text(
                   '2048',
-                  style: TextStyle(
-                    fontSize: 50,
-                    color: Color(0xff776e65),
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.headline1,
                 ),
               ),
               Column(
@@ -504,19 +500,20 @@ class BoardGridWidget extends StatelessWidget {
       }
     }
     return Positioned(
-        left: 0.0,
-        top: 0.0,
-        child: Container(
-          width: _state.boardSize().width,
-          height: _state.boardSize().height,
-          decoration: BoxDecoration(
-            color: Colors.grey,
-            borderRadius: BorderRadius.all(Radius.circular(8.0)),
-          ),
-          child: Stack(
-            children: _backgroundBox,
-          ),
-        ));
+      left: 0.0,
+      top: 0.0,
+      child: Container(
+        width: _state.boardSize().width,
+        height: _state.boardSize().height,
+        decoration: BoxDecoration(
+          color: Colors.grey,
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        ),
+        child: Stack(
+          children: _backgroundBox,
+        ),
+      ),
+    );
   }
 }
 
