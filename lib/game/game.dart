@@ -1,9 +1,14 @@
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:the_game_2048/service/cache/cache_service.dart';
 
 import '../config.dart';
+import '../config.dart';
 import '../widget/consum.dart';
+import '../widget/theme.dart';
+import '../widget/theme.dart';
 import '../widget/theme.dart';
 import 'logic.dart';
 
@@ -144,7 +149,7 @@ class _GameWidgetState extends State<GameWidget> {
       context: context,
       builder: (_) {
         return Container(
-          color: Colors.white,
+          color: Theme.of(context).canvasColor,
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -160,10 +165,14 @@ class _GameWidgetState extends State<GameWidget> {
                             width: 45,
                             height: 45,
                             child: FlatButton(
+                              color: Theme.of(context).buttonColor,
                               padding: EdgeInsets.zero,
-                              child: Icon(Icons.info_outline),
+                              child: Icon(
+                                Icons.info,
+                                color: Theme.of(context).primaryColor,
+                              ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100),
+                                borderRadius: Config.circleRadius,
                               ),
                               onPressed: () => _infoClick(_, context),
                             ),
@@ -173,31 +182,42 @@ class _GameWidgetState extends State<GameWidget> {
                             width: 45,
                             height: 45,
                             child: FlatButton(
+                              color: Theme.of(context).buttonColor,
                               padding: EdgeInsets.zero,
-                              child: Icon(Icons.help_outline),
+                              child: Icon(
+                                Icons.help,
+                                color: Theme.of(context).primaryColor,
+                              ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100),
+                                borderRadius: Config.circleRadius,
                               ),
                               onPressed: () => _helpClick(_, context),
                             ),
                           ),
                         ],
                       ),
-                      OutlineButton(
+                      FlatButton(
                         child: Consum<TTheme>(
-                            value: TTheme.shared,
-                            builder: (_, theme) {
-                              String text = 'System';
-                              if (theme.mode == 1) {
-                                text = 'Light mode';
-                              } else if (theme.mode == 2) {
-                                text = 'Dark mode';
-                              }
-                              return Text(text);
-                            }),
-                        highlightedBorderColor: Colors.grey,
+                          value: TTheme.shared,
+                          builder: (_, theme) {
+                            String text = 'System';
+                            if (theme.mode == 1) {
+                              text = 'Light mode';
+                            } else if (theme.mode == 2) {
+                              text = 'Dark mode';
+                            }
+                            return Text(
+                              text,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            );
+                          },
+                        ),
+                        color: Theme.of(context).buttonColor,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(100),
+                          borderRadius: Config.radius,
                         ),
                         onPressed: () {
                           TTheme.shared.changeTheme();
@@ -334,8 +354,8 @@ class _GameWidgetState extends State<GameWidget> {
                 height: 60.0,
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.orange[100],
-                  borderRadius: BorderRadius.circular(8),
+                  color: Theme.of(context).cardColor,
+                  borderRadius: Config.radius,
                 ),
                 child: Center(
                   child: Column(
@@ -344,7 +364,7 @@ class _GameWidgetState extends State<GameWidget> {
                       Text(
                         "SCORE",
                         style: TextStyle(
-                          color: Colors.grey[700],
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
@@ -353,7 +373,6 @@ class _GameWidgetState extends State<GameWidget> {
                         style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey[800],
                         ),
                       ),
                     ],
@@ -366,8 +385,8 @@ class _GameWidgetState extends State<GameWidget> {
                 height: 60.0,
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.orange[100],
-                  borderRadius: BorderRadius.circular(8),
+                  color: Theme.of(context).cardColor,
+                  borderRadius: Config.radius,
                 ),
                 child: Center(
                   child: Column(
@@ -376,7 +395,7 @@ class _GameWidgetState extends State<GameWidget> {
                       Text(
                         "BEST",
                         style: TextStyle(
-                          color: Colors.grey[700],
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
@@ -384,7 +403,6 @@ class _GameWidgetState extends State<GameWidget> {
                         style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey[800],
                         ),
                       ),
                     ],
@@ -392,12 +410,22 @@ class _GameWidgetState extends State<GameWidget> {
                 ),
               ),
               Spacer(),
-              IconButton(
-                icon: Icon(
-                  Icons.settings,
-                  size: 30,
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: FlatButton(
+                  padding: EdgeInsets.zero,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: Config.circleRadius,
+                  ),
+                  color: Theme.of(context).buttonColor,
+                  child: Icon(
+                    Icons.settings,
+                    size: 25,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  onPressed: menuClick,
                 ),
-                onPressed: menuClick,
               ),
             ],
           ),
@@ -453,14 +481,14 @@ class _GameWidgetState extends State<GameWidget> {
                 width: _queryData.size.width,
                 height: _queryData.size.width,
                 color: _isGameOver ? Color.fromRGBO(255, 255, 255, 0.4) : Colors.transparent,
+                padding: const EdgeInsets.only(bottom: 50),
                 child: Opacity(
                   opacity: _isGameOver ? 1.0 : 0.0,
                   child: Center(
-                    child: Text(
-                      "Game Over!",
-                      style: TextStyle(
-                        fontSize: 24.0,
-                      ),
+                    child: Image.asset(
+                      'assets/images/ic_over.png',
+                      color: Theme.of(context).cardColor,
+                      width: _queryData.size.width / 3,
                     ),
                   ),
                 ),
@@ -494,7 +522,7 @@ class BoardGridWidget extends StatelessWidget {
           left: c * width + _state.cellPadding * (c + 1),
           top: r * width + _state.cellPadding * (r + 1),
           size: width,
-          color: Colors.grey[300],
+          color: Theme.of(context).focusColor,
         );
         _backgroundBox.add(box);
       }
@@ -506,7 +534,7 @@ class BoardGridWidget extends StatelessWidget {
         width: _state.boardSize().width,
         height: _state.boardSize().height,
         decoration: BoxDecoration(
-          color: Colors.grey,
+          color: Theme.of(context).accentColor,
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         child: Stack(
@@ -520,8 +548,7 @@ class BoardGridWidget extends StatelessWidget {
 class AnimatedCellWidget extends AnimatedWidget {
   final BoardCell cell;
   final _GameWidgetState state;
-  AnimatedCellWidget({Key key, this.cell, this.state, Animation<double> animation})
-      : super(key: key, listenable: animation);
+  AnimatedCellWidget({Key key, this.cell, this.state, Animation<double> animation}) : super(key: key, listenable: animation);
 
   @override
   Widget build(BuildContext context) {
@@ -530,27 +557,31 @@ class AnimatedCellWidget extends AnimatedWidget {
     Size boardSize = state.boardSize();
     double width = (boardSize.width - (state.column + 1) * state.cellPadding) / state.column;
     if (cell.number == 0) {
-      return Container();
+      return SizedBox();
     } else {
-      return CellBox(
-        left: (cell.column * width + state.cellPadding * (cell.column + 1)) +
-            width / 2 * (1 - animationValue),
-        top: cell.row * width +
-            state.cellPadding * (cell.row + 1) +
-            width / 2 * (1 - animationValue),
-        size: width * animationValue,
-        color: Config.boxColors.containsKey(cell.number)
-            ? Config.boxColors[cell.number]
-            : Config.boxColors[Config.boxColors.keys.last],
-        text: Text(
-          cell.number.toString(),
-          maxLines: 1,
-          style: TextStyle(
-            fontSize: 30.0 * animationValue,
-            fontWeight: FontWeight.bold,
-            color: cell.number < 32 ? Colors.grey[600] : Colors.grey[50],
-          ),
-        ),
+      return Consum<TTheme>(
+        value: TTheme.shared,
+        builder: (_, theme) {
+          final boxColors = theme.getBoxColors();
+          // final rd = Random.secure().nextInt(boxColors.length);
+          // final number = boxColors.keys.toList()[rd];
+          final number = cell.number;
+          return CellBox(
+            left: (cell.column * width + state.cellPadding * (cell.column + 1)) + width / 2 * (1 - animationValue),
+            top: cell.row * width + state.cellPadding * (cell.row + 1) + width / 2 * (1 - animationValue),
+            size: width * animationValue,
+            color: boxColors.containsKey(number) ? boxColors[number] : boxColors[boxColors.keys.last],
+            text: Text(
+              number.toString(),
+              maxLines: 1,
+              style: TextStyle(
+                fontSize: 30.0 * animationValue,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).hintColor,
+              ),
+            ),
+          );
+        },
       );
     }
   }
@@ -623,8 +654,7 @@ class CellBox extends StatelessWidget {
             color: color,
             borderRadius: BorderRadius.all(Radius.circular(8.0)),
           ),
-          child: Center(
-              child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.center, child: text))),
+          child: Center(child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.center, child: text))),
     );
   }
 }
