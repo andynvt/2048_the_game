@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class TTheme extends ChangeNotifier {
   static TTheme shared = TTheme();
 
   final ThemeData light = ThemeData(
     brightness: Brightness.light,
-    fontFamily: 'SFPro',
     canvasColor: Colors.grey[300],
     primaryColor: Colors.white,
     buttonColor: Color(0xff157EFB),
@@ -23,7 +23,6 @@ class TTheme extends ChangeNotifier {
   );
   final ThemeData dark = ThemeData(
     brightness: Brightness.dark,
-    fontFamily: 'SFPro',
     primaryColor: Colors.white,
     buttonColor: Color(0xff1C88FB),
     cardColor: Colors.grey[800],
@@ -38,6 +37,7 @@ class TTheme extends ChangeNotifier {
       ),
     ),
   );
+
   int mode = 1;
 
   static final boxColorsDark = <int, Color>{
@@ -79,6 +79,9 @@ class TTheme extends ChangeNotifier {
 
   ThemeData getTheme() {
     switch (mode) {
+      case 0:
+        if (isDark()) return dark;
+        return light;
       case 1:
         return light;
       case 2:
@@ -90,6 +93,9 @@ class TTheme extends ChangeNotifier {
 
   Map<int, Color> getBoxColors() {
     switch (mode) {
+      case 0:
+        if (isDark()) return boxColorsDark;
+        return boxColorsLight;
       case 1:
         return boxColorsLight;
       case 2:
@@ -97,5 +103,11 @@ class TTheme extends ChangeNotifier {
       default:
         return boxColorsLight;
     }
+  }
+
+  bool isDark() {
+    var brightness = SchedulerBinding.instance.window.platformBrightness;
+    print(brightness);
+    return brightness == Brightness.dark;
   }
 }
