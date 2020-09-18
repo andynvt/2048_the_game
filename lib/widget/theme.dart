@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:the_game_2048/service/cache/cache_service.dart';
 
 class TTheme extends ChangeNotifier {
   static TTheme shared = TTheme();
@@ -38,8 +39,6 @@ class TTheme extends ChangeNotifier {
     ),
   );
 
-  int mode = 1;
-
   static final boxColorsDark = <int, Color>{
     2: Colors.indigo[700],
     4: Colors.blue[700],
@@ -69,11 +68,18 @@ class TTheme extends ChangeNotifier {
     4096: Colors.red[400],
   };
 
+  int mode;
+
+  TTheme() {
+    mode = CacheService.shared().getInt('mode');
+  }
+
   void changeTheme() {
     mode += 1;
     if (mode > 2) {
       mode = 0;
     }
+    CacheService.shared().setInt('mode', mode);
     notifyListeners();
   }
 
@@ -107,7 +113,6 @@ class TTheme extends ChangeNotifier {
 
   bool isDark() {
     var brightness = SchedulerBinding.instance.window.platformBrightness;
-    print(brightness);
     return brightness == Brightness.dark;
   }
 }

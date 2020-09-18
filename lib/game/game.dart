@@ -35,7 +35,7 @@ class _GameWidgetState extends State<GameWidget> {
   void initState() {
     super.initState();
 
-    newGame(4);
+    newGame(row);
   }
 
   void newGame(int size) {
@@ -46,6 +46,7 @@ class _GameWidgetState extends State<GameWidget> {
       _isGameOver = false;
     });
     bestScore = CacheService.shared().getInt('score_$row');
+    CacheService.shared().setInt('size', size);
   }
 
   void moveLeft() {

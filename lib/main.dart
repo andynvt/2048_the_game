@@ -13,6 +13,12 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    int size = 4;
+    final s = CacheService.shared().getInt('size');
+
+    if (s != 0) {
+      size = s;
+    }
     return ChangeNotifierProvider.value(
       value: TTheme.shared,
       child: Consumer<TTheme>(
@@ -21,7 +27,7 @@ class MyApp extends StatelessWidget {
             theme: theme.getTheme(),
             home: new Scaffold(
               body: SafeArea(
-                child: GameWidget(size: 4),
+                child: GameWidget(size: size),
               ),
             ),
           );
