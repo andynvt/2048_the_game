@@ -15,6 +15,9 @@ dependencies:
   provider: ^4.3.2+2
   shared_preferences: ^0.5.7+3
   auto_size_text: ^2.1.0
+  flutter_launcher_icons: ^0.8.0
+  flutter_native_splash: ^0.1.9
+
 
 dev_dependencies:
   flutter_test:
@@ -26,3 +29,13 @@ flutter:
 
   assets:
     - assets/images/
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/2048.png"
+  adaptive_icon_foreground: "assets/icons/no.png"
+
+flutter_native_splash:
+  image: assets/icons/splash.png
+  color: "ffffff"

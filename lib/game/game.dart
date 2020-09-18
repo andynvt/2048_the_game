@@ -1,14 +1,9 @@
 import 'dart:math';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:the_game_2048/service/cache/cache_service.dart';
-
-import '../config.dart';
 import '../config.dart';
 import '../widget/consum.dart';
-import '../widget/theme.dart';
-import '../widget/theme.dart';
 import '../widget/theme.dart';
 import 'logic.dart';
 
@@ -112,7 +107,7 @@ class _GameWidgetState extends State<GameWidget> {
               Text(Config.about),
               SizedBox(height: 16),
               Text(
-                '2048 The Game ${Config.version}',
+                '2048 The Classic Game ${Config.version}',
                 style: TextStyle(
                   color: Colors.grey,
                 ),
@@ -233,10 +228,10 @@ class _GameWidgetState extends State<GameWidget> {
                           InkWell(
                             onTap: () {
                               Navigator.of(_).pop();
-                              newGame(2);
+                              newGame(3);
                             },
-                            child: Container(
-                              color: Colors.red,
+                            child: Image.asset(
+                              'assets/images/3.png',
                               height: width,
                               width: width,
                             ),
@@ -252,10 +247,9 @@ class _GameWidgetState extends State<GameWidget> {
                             onTap: () {
                               Navigator.of(_).pop();
                               newGame(4);
-                              // props.onChange(4);
                             },
-                            child: Container(
-                              color: Colors.red,
+                            child: Image.asset(
+                              'assets/images/4.png',
                               height: width,
                               width: width,
                             ),
@@ -271,10 +265,9 @@ class _GameWidgetState extends State<GameWidget> {
                             onTap: () {
                               Navigator.of(_).pop();
                               newGame(5);
-                              // props.onChange(5);
                             },
-                            child: Container(
-                              color: Colors.red,
+                            child: Image.asset(
+                              'assets/images/5.png',
                               height: width,
                               width: width,
                             ),
@@ -535,7 +528,7 @@ class BoardGridWidget extends StatelessWidget {
         height: _state.boardSize().height,
         decoration: BoxDecoration(
           color: Theme.of(context).accentColor,
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          borderRadius: Config.radius,
         ),
         child: Stack(
           children: _backgroundBox,
@@ -556,6 +549,7 @@ class AnimatedCellWidget extends AnimatedWidget {
     double animationValue = animation.value;
     Size boardSize = state.boardSize();
     double width = (boardSize.width - (state.column + 1) * state.cellPadding) / state.column;
+
     if (cell.number == 0) {
       return SizedBox();
     } else {
@@ -565,7 +559,8 @@ class AnimatedCellWidget extends AnimatedWidget {
           final boxColors = theme.getBoxColors();
           // final rd = Random.secure().nextInt(boxColors.length);
           // final number = boxColors.keys.toList()[rd];
-          final number = cell.number;
+          int number = cell.number;
+
           return CellBox(
             left: (cell.column * width + state.cellPadding * (cell.column + 1)) + width / 2 * (1 - animationValue),
             top: cell.row * width + state.cellPadding * (cell.row + 1) + width / 2 * (1 - animationValue),
@@ -647,14 +642,21 @@ class CellBox extends StatelessWidget {
       left: left,
       top: top,
       child: Container(
-          width: size,
-          height: size,
-          padding: EdgeInsets.symmetric(horizontal: 5),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        width: size,
+        height: size,
+        padding: EdgeInsets.symmetric(horizontal: 5),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: Config.radius,
+        ),
+        child: Center(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.center,
+            child: text,
           ),
-          child: Center(child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.center, child: text))),
+        ),
+      ),
     );
   }
 }
